@@ -1,0 +1,28 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="right-drawer">
+  <template>
+
+
+    <app-drawer id="drawer" align="right" swipe-open>
+      <div class="drawer-contents">
+        <template is="dom-repeat" id="menu" items="[[items]]">
+          <paper-icon-item>
+            <iron-icon class="grayIcon" icon="[[item]]" item-icon></iron-icon>
+            <span>[[item]]</span>
+          </paper-icon-item>
+        </template>
+      </div>
+    </app-drawer>
+
+  </template>
+
+  <script>
+      Polymer({
+          is: 'right-drawer'
+          toggle: function () {
+              this.$.drawer.toggle()
+          }
+      });
+  </script>
+</dom-module>

@@ -1,0 +1,33 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+
+<dom-module id="page-tools">
+  <template>
+
+
+        <template is="dom-repeat" id="menu" items="[[items]]">
+          <paper-icon-item>
+            <iron-icon class="grayIcon" icon="[[item]]" item-icon></iron-icon>
+            <span>[[item]]</span>
+          </paper-icon-item>
+        </template>
+
+  </template>
+
+  <script>
+      Polymer({
+          is: 'page-tools',
+          properties:{
+              items: {
+                  type: Object,
+                  value: ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard']
+
+              }
+          },
+          toggle: function () {
+              this.$.drawer.toggle()
+          }
+      });
+  </script>
+</dom-module>
