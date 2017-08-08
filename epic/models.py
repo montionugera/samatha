@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
+
 from namespace.models import NameSpace
 from samatha.json_data_models import TrackableItem, DevelopAbleContainerStateItem, TestableChangableItem, \
     JsonDataSupportModel, RoleManageSuport
@@ -84,9 +85,16 @@ class Story(TrackableItem, DevelopAbleContainerStateItem):
         db_table = 'story_info'
 
 
+class Issue(TrackableItem, DevelopAbleContainerStateItem):
+    key = models.CharField(max_length=128, unique=True)
+    name = models.CharField(max_length=128)
+    desc = models.TextField(default='null')
+    data = models.TextField(default='null')
+
+
 class Task(TrackableItem):
-    epic = models.ForeignKey(Epic, on_delete=models.CASCADE)
     story = models.ForeignKey(Story, null=True, on_delete=models.CASCADE)
+    issue = models.ForeignKey(Issue, null=True, on_delete=models.CASCADE)
     key = models.CharField(max_length=128, unique=True)
     name = models.CharField(max_length=128)
     desc = models.TextField(default='null')
@@ -124,7 +132,7 @@ class Task(TrackableItem):
         (STATE_CANCEL, 'Cancel'),
     )
     TAKS_STATE_PATHS = {
-        STATE_PREPARE: [STATE_PENDING, STATE_CANCEL],
+        STATE_PREPARE: [STATE_PENDING, STATE_CANCEL, STATE_TODO],
         STATE_TODO: [STATE_PENDING, STATE_CANCEL, STATE_INPROGRESS],
         STATE_INPROGRESS: [STATE_PENDING, STATE_CANCEL, STATE_TOVERIFY],
         STATE_TOVERIFY: [STATE_PENDING, STATE_CANCEL, STATE_VERIFYING],
@@ -147,19 +155,18 @@ class Task(TrackableItem):
 
     def get_updatable_states_for(self, user):
         current_state = self.task_state
-        user.get_epic_roles(self.epic)
+
         is_responder = (self.responder_id == user.id)
         limit_states = Task.TAKS_STATE_PATHS.get(current_state, [])
         available_states = []
         if is_responder:
-            available_states += [Task.STATE_PREPARE, Task.STATE_TODO, Task.STATE_TOVERIFY,
+            available_states += [Task.STATE_PREPARE, Task.STATE_TODO,
+                                 Task.STATE_INPROGRESS, Task.STATE_TOVERIFY,
                                  Task.STATE_PENDING, Task.STATE_CANCEL]
-        if EpicMember.ROLE_TEST in user.get_epic_roles:
+        if EpicMember.ROLE_TEST in user.get_epic_roles(self.epic):
             available_states += [Task.STATE_VERIFYING,
                                  Task.STATE_TEST_F, Task.STATE_TEST_P, Task.STATE_DONE]
         available_states = list(set(available_states).intersection(set(limit_states)))
-        print current_state
-        print available_states
         return available_states
 
 

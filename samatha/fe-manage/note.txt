@@ -1,0 +1,4 @@
+npm init
+npm install gulp --save-dev
+npm install gulp-livereload --save-dev
+bower install --save paper-button#2.0-preview

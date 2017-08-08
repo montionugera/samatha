@@ -22,6 +22,16 @@ The PRPL pattern, in a nutshell:
 
 [Check out our blog post that covers what's changed in PSK2 and how to migrate!](https://www.polymer-project.org/1.0/blog/2016-08-18-polymer-starter-kit-or-polymer-cli.html)
 
+### Quickstart
+
+We've recorded a Polycast to get you up and running with PSK2 fast!
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=HgJ0XCyBwzY&list=PLNYkxOF6rcIDdS7HWIC_BYRunV6MHs5xo&index=10">
+    <img src="https://img.youtube.com/vi/HgJ0XCyBwzY/0.jpg" alt="Polymer Starter Kit 2 video">
+  </a>
+</p>
+
 ### Setup
 
 ##### Prerequisites
@@ -30,6 +40,10 @@ First, install [Polymer CLI](https://github.com/Polymer/polymer-cli) using
 [npm](https://www.npmjs.com) (we assume you have pre-installed [node.js](https://nodejs.org)).
 
     npm install -g polymer-cli
+
+Second, install [Bower](https://bower.io/) using [npm](https://www.npmjs.com)
+
+    npm install -g bower
 
 ##### Initialize project from template
 
@@ -76,6 +90,13 @@ This command will run [Web Component Tester](https://github.com/Polymer/web-comp
 against the browsers currently installed on your machine:
 
     polymer test
+
+If running Windows you will need to set the following environment variables:
+
+- LAUNCHPAD_BROWSERS
+- LAUNCHPAD_CHROME
+
+Read More here [daffl/launchpad](https://github.com/daffl/launchpad#environment-variables-impacting-local-browsers-detection)
 
 ### Adding a new view
 

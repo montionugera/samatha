@@ -11,7 +11,7 @@ class DevelopAbleContainerStateItem(models.Model):
     STATE_CANCEL = 'CC'
 
     STATE_CHOICES = (
-        (STATES_PREPARE, 'PP'),
+        (STATES_PREPARE, 'Prepare'),
         (STATES_READY_FOR_DEV, 'Ready-for-dev'),
         (STATE_INPROGRESS, 'In-progress'),
         (STATE_DONE, 'Done'),

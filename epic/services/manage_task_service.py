@@ -17,7 +17,7 @@ class CreateTaskService(UserActivityService):
         self.input_validator.validate_shuoud_be_int_parameter(task_sprint_no=task_sprint_no, allow_null=True)
         if Task.objects.filter(key=task_key).exists():
             raise BusinessError.get_invalid_parameter_exception(
-                parameter_name='story_key',
+                parameter_name='task_key',
                 reason_desc="This key already exist ")
         task = Task(key=task_key, name=task_name, desc=task_desc, estimate_hr=task_estimate_hr,
                     creator=self.user,responder=responder)
@@ -66,7 +66,6 @@ class UpdateTaskStateService(UserActivityService):
             raise BusinessError.get_invalid_parameter_exception(
                 parameter_name='task_state',
                 reason_desc="state %s not in updatable states (%s) "%(task_state,available_states))
-
 
 
     def _do_service(self, task=None, task_state=Task.STATE_PREPARE):

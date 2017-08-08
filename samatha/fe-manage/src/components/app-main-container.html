@@ -1,0 +1,77 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<dom-module id="app-main-container">
+  <template>
+
+
+    <iron-pages
+      selected="[[page]]"
+      attr-for-selected="name"
+      fallback-selection="view404"
+      role="main">
+      <my-view1 name="view1"></my-view1>
+      <my-view2 name="view2"></my-view2>
+      <my-view3 name="view3"></my-view3>
+      <my-view404 name="view404"></my-view404>
+      <create-namespace-view name="create-namespace"></create-namespace-view>
+    </iron-pages>
+  </template>
+
+  <script>
+      class AppMainContainer extends Polymer.Element {
+
+          static get is() {
+              return 'app-main-container';
+          }
+
+          static get properties() {
+              return {
+                  page: {
+                      type: String,
+                      reflectToAttribute: true,
+                      notify: true,
+                      observer: '_pageChanged',
+                  },
+                  loading: {
+                      type: Boolean,
+                      reflectToAttribute: true,
+                      notify: true
+                  },
+                  pageMap: {
+                      type: Object,
+                      value: {
+                          'create-namespace': '../pages/name-space/create-namespace-view.html'
+                      }
+                  },
+              };
+          }
+
+          _pageChanged(page) {
+              // Load page import on demand. Show 404 page if fails
+              var resolvedPageUrl = "";
+              if (this.pageMap[page] !== undefined) {
+                  resolvedPageUrl = this.resolveUrl(this.pageMap[page]);
+              } else {
+                  resolvedPageUrl = this.resolveUrl('../pages/my-' + page + '.html');
+              }
+
+              var component = this;
+              Polymer.importHref(
+                  resolvedPageUrl,
+                  function (file) {
+                      component.loading = false;
+                  },
+                  function (file) {
+                      component.loading = false;
+                      component.page = 'view404';
+                  },
+                  true);
+
+          }
+      }
+
+      window.customElements.define(AppMainContainer.is, AppMainContainer);
+  </script>
+</dom-module>

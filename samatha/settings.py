@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'epic',
     'namespace',
-    'issue',
     'acl',
     'sprint',
     'testsuite',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

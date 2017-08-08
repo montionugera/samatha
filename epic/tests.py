@@ -9,6 +9,7 @@ from epic.services.manage_task_service import UpdateTaskInfoService, CreateTaskS
 from namespace.models import NameSpace
 from namespace.tests import _create_namespace
 from samatha.services import SuperService
+from sprint.services import CreateSprintService
 
 
 def _add_story(user, epic):
@@ -61,12 +62,16 @@ class BaseEpicTestCase(TestCase):
 
         self.namespace = NameSpace(name='SPN', creator=self.user)
         self.namespace.save()
+        self.epic = _add_epic(self.user, self.namespace)
         self.devmembers = []
         self.devmembers.append(self.epic_developer)
         self.devmembers.append(self.epic_tester)
         self.devmembers.append(self.epic_sa)
         self.devmembers.append(self.epic_scrummaster)
-        self.epic = _add_epic(self.user, self.namespace)
+
+        sprint_service = CreateSprintService(user=self.user)
+        name_space = self.namespace
+        self.sprint_slot = sprint_service.do_service(name_space=name_space)
 
     def _add_team_to_ns(self):
         sv = LinkUnlinkUserToEpicService(user=self.user)
@@ -159,7 +164,7 @@ class ManageTaskTestCase(BaseEpicTestCase):
     def test_user_can_add_new_task_to_story(self):
         epic = _add_epic(self.user, self.namespace)
         story = _add_story(self.user, epic)
-        task = _add_task(self.user, story)
+        task = _add_task(self.user, story,epic=story.epic)
 
         self.assertIsNotNone(task.id)
         self.assertIsNotNone(task.story.id)
@@ -167,7 +172,7 @@ class ManageTaskTestCase(BaseEpicTestCase):
     def test_user_can_update_task_info(self):
         story = _add_story(self.user, self.epic)
         story2 = _add_story(self.user, self.epic)
-        task = _add_task(self.user, story)
+        task = _add_task(self.user, story,epic=story.epic)
         the_uuid = str(uuid.uuid4())
         service = UpdateTaskInfoService(user=self.user)
         task2 = service.do_service(story=story2,
@@ -184,30 +189,38 @@ class ManageTaskTestCase(BaseEpicTestCase):
         self.assertEqual(task2.estimate_hr, 8.0)
         self.assertEqual(task2.sprint_no, 35)
 
-    def test_task_responder_can_update_task_state_to_todo(self):
+
+    def test_task_responder_can_update_task_state_though_verify(self):
         story = _add_story(self.user, self.epic)
-        task = _add_task(self.epic_developer, story)
-        service = UpdateTaskStateService(user=self.epic_developer)
+        task = _add_task(self.epic_developer, story,epic=story.epic)
+
+        service = UpdateTaskStateService(user=task.responder)
         self.assertEqual(task.task_state, Task.STATE_PREPARE)
         task = service.do_service(task=task, task_state=Task.STATE_TODO)
-        task = Task.objects.get(id=task.id)
-        self.assertEqual(task.task_state, Task.STATE_TODO)
-
-    def test_task_responder_can_update_task_state_to_INPROGRESS(self):
-        story = _add_story(self.user, self.epic)
-        task = _add_task(self.epic_developer, story)
-        service = UpdateTaskStateService(user=task.responder)
-        self.assertEqual(task.task_state, Task.STATE_PREPARE)
         task = service.do_service(task=task, task_state=Task.STATE_INPROGRESS)
-        task = Task.objects.get(id=task.id)
-        self.assertEqual(task.task_state, Task.STATE_INPROGRESS)
-
-    def test_task_responder_can_update_task_state_to_Verify(self):
-        story = _add_story(self.user, self.epic)
-        task = _add_task(self.epic_developer, story)
-
-        service = UpdateTaskStateService(user=task.responder)
-        self.assertEqual(task.task_state, Task.STATE_PREPARE)
         task = service.do_service(task=task, task_state=Task.STATE_TOVERIFY)
         task = Task.objects.get(id=task.id)
         self.assertEqual(task.task_state, Task.STATE_TOVERIFY)
+
+    def test_epic_tester_can_update_task_state_through_done(self):
+        story = _add_story(self.user, self.epic)
+        task = _add_task(self.epic_developer, story,epic=story.epic)
+
+        servicerep = UpdateTaskStateService(user=task.responder)
+        self.assertEqual(task.task_state, Task.STATE_PREPARE)
+        task = servicerep.do_service(task=task, task_state=Task.STATE_TODO)
+        task = servicerep.do_service(task=task, task_state=Task.STATE_INPROGRESS)
+        task = servicerep.do_service(task=task, task_state=Task.STATE_TOVERIFY)
+
+        service = UpdateTaskStateService(user=self.epic_tester)
+        task = service.do_service(task=task, task_state=Task.STATE_VERIFYING)
+        task = service.do_service(task=task, task_state=Task.STATE_TEST_F)
+
+        task = servicerep.do_service(task=task, task_state=Task.STATE_INPROGRESS)
+        task = servicerep.do_service(task=task, task_state=Task.STATE_TOVERIFY)
+        task = service.do_service(task=task, task_state=Task.STATE_VERIFYING)
+        task = service.do_service(task=task, task_state=Task.STATE_TEST_P)
+        task = service.do_service(task=task, task_state=Task.STATE_DONE)
+
+        task = Task.objects.get(id=task.id)
+        self.assertEqual(task.task_state, Task.STATE_DONE)

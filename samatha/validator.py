@@ -45,3 +45,15 @@ class InputValidator(object):
                     parameter_name=k,
                     reason_desc="Value must be int "
                                 "(%s)" % v)
+
+    def validate_shuoud_be_list_parameter(self, **kwarg):
+        options = ['allow_null']
+        allow_null = kwarg.get('allow_null', False)
+        for k, v in kwarg.iteritems():
+            if allow_null and v is None:
+                continue
+            if k not in options and type(v) is not list:
+                raise BusinessError.get_invalid_parameter_exception(
+                    parameter_name=k,
+                    reason_desc="Value must be list "
+                                "(%s)" % v)
