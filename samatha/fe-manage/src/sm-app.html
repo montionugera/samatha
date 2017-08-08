@@ -1,0 +1,198 @@
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/app-route/app-location.html">
+<link rel="import" href="montkits/app/mi-app.html">
+<link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-item/paper-icon-item.html">
+
+<link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="/bower_components/">
+<link rel="import" href="/bower_components/paper-progress/paper-progress.html">
+<dom-module id="sm-app">
+  <template>
+
+    <custom-style>
+      <style is="custom-style">
+
+        body {
+          margin: 0;
+          font-family: 'Roboto', 'Noto', sans-serif;
+          background-color: #eee;
+        }
+
+        .blueHeader {
+          background-color: #4285f4;
+          color: #fff;
+        }
+
+        .blueHeader paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
+
+        .whiteHeader {
+          font-weight: bold;
+          background-color: white;
+        }
+
+        .iconItem {
+          color: #666;
+        }
+
+        app-drawer-layout:not([narrow]) [drawer-toggle] {
+          display: none;
+        }
+
+        paper-icon-item:focus {
+          border-color: #506647;
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+
+      </style>
+    </custom-style>
+    <app-location id="appLoc" route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"></app-route>
+    <!--<mi-app comp-url-dict="[[compUrlDict]]"></mi-app>-->
+
+
+    <app-drawer-layout>
+
+      <app-drawer swipe-open slot="drawer">
+        <app-header-layout has-scrolling-region>
+
+          <app-header class="whiteHeader" waterfall fixed slot="header">
+            <app-toolbar fullbreed>
+              <paper-icon-item on-tap="toggleNamespace" class="Strong">[[namespace.name]]</paper-icon-item>
+            </app-toolbar>
+          </app-header>
+          <template id="sideMenu" is="dom-repeat" items="{{sideMenus}}">
+
+            <paper-icon-item class="iconItem" current on-tap="handleClickSideMenu">
+              <iron-icon class="grayIcon" icon="[[item.icon]]" slot="item-icon"></iron-icon>
+              <span>[[item.name]]</span>
+            </paper-icon-item>
+          </template>
+
+        </app-header-layout>
+      </app-drawer>
+
+      <app-header-layout>
+
+        <app-header class="blueHeader" condenses reveals effects="waterfall" slot="header">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>[[header.title]]</div>
+            <paper-icon-button icon="face"></paper-icon-button>
+            <paper-icon-button icon="more-vert"></paper-icon-button>
+          </app-toolbar>
+          <!--<app-toolbar></app-toolbar>-->
+          <!--<app-toolbar>-->
+          <!--<div spacer main-title>My Drive</div>-->
+          <!--</app-toolbar>-->
+        </app-header>
+        <paper-progress value="10" indeterminate bottom-item style="width: auto;"
+                        hidden$="[[!loading]]"
+        ></paper-progress>
+
+        <div id="container"></div>
+
+      </app-header-layout>
+
+    </app-drawer-layout>
+
+  </template>
+
+  <script>
+      class SmApp extends MiApp {
+
+          static get is() {
+              return 'sm-app';
+          }
+
+          constructor() {
+              super();
+              this.compUrlDict = {
+                  'my-view1': {
+                      src: '/src/pages/my-view1.html',
+                      dom: 'my-view1'
+                  },
+                  'my-view2': {
+                      src: '/src/pages/my-view2.html',
+                      dom: 'my-view2'
+                  },
+                  'mi-view': {
+                      src: '/src/montkits/miview/mi-view.html',
+                      dom: 'mi-view'
+                  },
+                  '404': {
+                      src: '/src/pages/my-view404.html',
+                      dom: 'my-view404'
+                  }
+              };
+              this.defaultPage = 'my-view1';
+              this.header = {
+                  title: "SAMATHA"
+              };
+              this.namespace = {
+                  name: "Name space"
+              };
+              this.sideMenus = [
+                  {name: "Dashboard", url: "/mi-view", key: "mi-view", icon: "inbox"},
+                  {name: "Epic", url: "/my-view1", key: "my-view1", icon: "favorite"},
+                  {name: "Summary", url: "/my-view2", key: "my-view2", icon: "polymer"},
+                  {name: "view 4 ", url: "/my-view4", key: "my-view4", icon: "backup"},
+              ];
+
+
+          }
+
+          static get properties() {
+              return {};
+          }
+
+          static get observers() {
+              return [
+                  '_routePageChanged(routeData.page)',
+              ];
+          }
+
+
+          toggleNamespace(e) {
+              const clickEle = e.target;
+              console.log("toggleNamespace");
+              alert("toggle Namespace");
+          }
+
+          handleClickSideMenu(e) {
+              const clickEle = e.target;
+              var item = this.$.sideMenu.itemForElement(clickEle);
+              this.$.appLoc.path = item.url;
+          }
+
+          changeRoute(e) {
+              console.log("change route");
+              var args = e.target.getAttribute('data-args');
+              this.$.appLoc.path = "/" + args;
+          }
+      }
+
+      window.customElements.define(SmApp.is, SmApp);
+  </script>
+</dom-module>

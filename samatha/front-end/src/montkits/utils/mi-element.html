@@ -1,0 +1,66 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+
+<dom-module id="mi-element">
+
+  <script>
+      class MiElement extends Polymer.Element {
+          static get is() {
+              return 'mi-element';
+          }
+
+          constructor() {
+              super();
+              this.loading = false;
+              this.compUrlDict = {
+                  'my-view1': {
+                      src: '/src/pages/my-view1.html',
+                      dom: 'my-view1'
+                  }
+              };
+          }
+
+          getDomByComponentId(compId) {
+              if(!this.isAvailableCompId(compId)){
+                  console.log("not Available");
+                  return;
+              }
+              return this.compUrlDict[compId].dom
+          }
+
+          getResourceToDownloadByComponentId(compId) {
+              return this.compUrlDict[compId].src
+          }
+
+          isAvailableCompId(compId) {
+              return (compId in this.compUrlDict)
+          }
+          mySpecialFunc(_input = "x"){
+              console.log(input);
+          }
+          importComp(compId, didFinishLoading) {
+              let dom = this.getDomByComponentId(compId);
+              this.loading = true;
+              let resetLoading = (function () {
+
+                  this.loading = false;
+              }).bind(this);
+
+              let componentUrl = this.getResourceToDownloadByComponentId(compId);
+              Polymer.importHref(
+                  componentUrl,
+                  (function (file) {
+                      setTimeout(resetLoading, 200);
+                      didFinishLoading(dom)
+                  }).bind(this),
+                  (function (file) {
+                      setTimeout(resetLoading, 200);
+                      didFinishLoading()
+                  }).bind(this),
+                  true);
+          }
+      }
+
+      window.customElements.define(MiElement.is, MiElement);
+  </script>
+</dom-module>

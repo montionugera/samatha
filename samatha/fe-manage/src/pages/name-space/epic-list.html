@@ -1,0 +1,24 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/src/montkits/miview/mi-view.html">
+
+<dom-module id="epic-list">
+  <template>
+    <div id="container">
+    </div>
+  </template>
+
+  <script>
+      class EpicList extends MiView {
+
+          static get is() {
+              return 'epic-list';
+          }
+
+          constructor() {
+              super();
+          }
+      }
+
+      window.customElements.define(EpicList.is, EpicList);
+  </script>
+</dom-module>

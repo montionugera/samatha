@@ -1,0 +1,26 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/sm-app-container.html",
+
+  "fragments": [
+    "src/pages/my-view1.html",
+    "src/pages/my-view2.html",
+    "src/pages/my-view3.html",
+    "src/pages/my-view404.html",
+    "src/pages/auth/login-view.html",
+    "src/pages/auth/signup-view.html",
+    "src/test-view.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "lint": {
+    "rules": ["polymer-2"]
+  }
+}

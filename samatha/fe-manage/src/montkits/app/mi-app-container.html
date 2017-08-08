@@ -1,0 +1,54 @@
+<link rel="import" href="/bower_components/app-route/app-location.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="./mi-app.html">
+<dom-module id="mi-app-contianer">
+  <template>
+    MiAppContainer
+    <div id="container">
+    </div>
+    <app-location id="appLocation" route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}">
+    </app-route>
+  </template>
+
+  <script>
+      class MiAppContainer extends MiApp {
+          static get is() {
+              return 'mi-app-container';
+          }
+
+          constructor() {
+              super();
+              this.compUrlDict = {
+                  'default': {
+                      src: '/src/pages/my-view1.html',
+                      dom: 'my-view1'
+                  },
+                  'dashboard': {
+                      src: '/src/montkits/app/mi-app.html',
+                      dom: 'mi-app'
+                  }
+              }
+          }
+
+          static get properties() {
+              return {
+              }
+          }
+
+          getComponentFromPage(page) {
+              if (page in ['my-view1']){
+                  return 'default'
+              }else{
+                  return 'dashboard'
+              }
+          }
+      }
+
+      window.customElements.define(MiAppContainer.is, MiAppContainer);
+  </script>
+</dom-module>

@@ -1,0 +1,65 @@
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/app-route/app-location.html">
+<link rel="import" href="montkits/app/mi-app-container.html">
+<link rel="lazy-import" href="my_app/my-app.html">
+<dom-module id="app-container">
+  <template>
+    <app-location id="appLoc" route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"></app-route>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+    <div>
+      This is Container.
+    </div>
+    <div id="container">
+    </div>
+  </template>
+
+  <script>
+      class AppContainer extends MiAppContainer {
+
+          static get is() {
+              return 'app-container';
+          }
+
+          constructor() {
+              super();
+              this.compUrlDict = {
+                  'default': {
+                      src: '/src/my_app/my-app.html',
+                      dom: 'my-app'
+                  }
+              };
+              this.defaultPage = 'default';
+              this.pageTitle = 'Bla bla';
+              document.title = "This is the new page title.";
+
+          }
+          getComponentFromPage(page) {
+              let compId = 'default';
+              let keys = [];
+              for(let k in this.compUrlDict) keys.push(k);
+              if (page === undefined ){
+                  compId =  'default'
+              }else if (keys.indexOf(page) >= 0) {
+                  compId =  page
+              }else{
+                  compId = 'dashboard'
+              }
+              console.log("getComponentFromPage ",compId," from page ",page);
+              return compId;
+          }
+      }
+
+      window.customElements.define(AppContainer.is, AppContainer);
+  </script>
+</dom-module>
