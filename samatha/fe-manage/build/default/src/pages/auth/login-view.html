@@ -1,0 +1,43 @@
+<link rel="import" href="/src/montkits/miview/mi-view.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../shared-styles.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/app-route/app-location.html">
+
+
+<dom-module id="login-view">
+  <template>
+    <app-location id="appLoc" route="{{route}}"></app-location>
+    <style>
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <h1>Login to access your work space</h1>
+      <form is="iron-form" id="form" method="post" action="/form/handler">
+        <paper-input name="name" label="name" on-tap=""></paper-input>
+
+        <paper-button on-tap="changeRouteToDashboard" data-args="my-view1"> Login </paper-button>
+      </form>
+    </div>
+  </template>
+
+  <script>
+      class LoginView extends MiView {
+          static get is() {
+              return 'login-view';
+          }
+
+          changeRouteToDashboard(e) {
+              this.$.appLoc.path = "/" + 'my-view1';
+          }
+      }
+
+      window.customElements.define(LoginView.is, LoginView);
+  </script>
+</dom-module>

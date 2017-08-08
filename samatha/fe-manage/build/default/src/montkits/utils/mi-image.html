@@ -1,0 +1,34 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<dom-module id="mi-image">
+  <template>
+    <div id="container">
+      Hello
+      [[imageData.src]]
+      <img src="[[imageData.src]]" rel="[[imageData.rel]]" title="[[imageData.title]]" alt="">
+    </div>
+  </template>
+
+  <script>
+      class MiImage extends Polymer.Element {
+
+          static get is() {
+              return 'mi-image';
+          }
+
+          static get properties() {
+              return {
+                  imageData: {
+                      type: Object,
+                      reflectToAttribute: true,
+                      value:{}
+                  },
+              };
+          }
+          constructor() {
+              super();
+          }
+      }
+
+      window.customElements.define(MiImage.is, MiImage);
+  </script>
+</dom-module>

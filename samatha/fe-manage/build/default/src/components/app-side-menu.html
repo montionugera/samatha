@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../shared-styles.html">
+
+<dom-module id="app-side-menu">
+  <template>
+    <style include="shared-styles">
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--light-primary-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: var(--dark-primary-color);
+      }
+    </style>
+
+    <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+      <a name="view1" href="/view1">View One</a>
+      <a name="view2" href="/view2">View Two</a>
+      <a name="view3" href="/view3">View Three</a>
+      <a name="create-namespace" href="/create-namespace">Create Name Space</a>
+    </iron-selector>
+  </template>
+
+  <script>
+      class AppSideMenu extends Polymer.Element {
+
+          static get is() {
+              return 'app-side-menu';
+          }
+
+          static get properties() {
+              return {
+                  page: {
+                      type: String,
+                      reflectToAttribute: true,
+                  },
+              };
+          }
+      }
+
+      window.customElements.define(AppSideMenu.is, AppSideMenu);
+  </script>
+</dom-module>

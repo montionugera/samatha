@@ -1,0 +1,26 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../utils/mi-element.html">
+
+
+<dom-module id="mi-view">
+
+  <template>
+    <div>
+      mi-view
+    </div>
+  </template>
+  <script>
+      class MiView extends MiElement {
+          static get is() {
+              return 'mi-view';
+          }
+          connectedCallback() {
+              super.connectedCallback();
+              this.viewDelegate.didFinishLoading(this);
+            }
+      }
+
+      window.customElements.define(MiView.is, MiView);
+  </script>
+</dom-module>

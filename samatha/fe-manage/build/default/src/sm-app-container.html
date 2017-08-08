@@ -1,0 +1,64 @@
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/app-route/app-location.html">
+<link rel="import" href="montkits/app/mi-app-container.html">
+<dom-module id="sm-app-container">
+  <template>
+    <app-location id="appLoc" route="{{route}}"></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div id="container">
+    </div>
+  </template>
+
+  <script>
+      class SmAppContainer extends MiAppContainer {
+
+          static get is() {
+              return 'sm-app-container';
+          }
+
+          constructor() {
+              super();
+              this.compUrlDict = {
+                  'default': {
+                      src: '/src/sm-default-app.html',
+                      dom: 'sm-default-app'
+                  },
+                  'dashboard': {
+                      src: '/src/sm-app.html',
+                      dom: 'sm-app'
+                  },
+                  'test-view': {
+                      src: '/src/test-view.html',
+                      dom: 'test-view'
+                  }
+              };
+              this.defaultPage = 'default';
+
+          }
+          getComponentFromPage(page) {
+              let compId = 'default';
+              var keys = [];
+              for(var k in this.compUrlDict) keys.push(k);
+              if (page === undefined ){
+                  compId =  'default'
+              }else if (keys.indexOf(page) >= 0) {
+                  compId =  page
+              }else{
+                  compId = 'dashboard'
+              }
+              console.log("getComponentFromPage ",compId," from page ",page);
+              return compId;
+          }
+      }
+
+      window.customElements.define(SmAppContainer.is, SmAppContainer);
+  </script>
+</dom-module>

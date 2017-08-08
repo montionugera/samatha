@@ -1,0 +1,60 @@
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/app-route/app-location.html">
+<link rel="import" href="montkits/app/mi-app.html">
+<dom-module id="sm-default-app">
+  <template>
+
+    <app-location id="appLoc" route="{{route}}"></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+    <!--<mi-app comp-url-dict="[[compUrlDict]]"></mi-app>-->
+
+    <div id="debugger">
+
+      [[routeData.section]]
+      [[subrouteData.page]]
+      [[tailrouteData.id]]
+    </div>
+    <div id="container">
+    </div>
+  </template>
+
+  <script>
+      class SmDefaultApp extends MiApp {
+
+          static get is() {
+              return 'sm-default-app';
+          }
+
+          constructor() {
+              super();
+              this.compUrlDict = {
+                  'login-view': {
+                      src: '/src/pages/auth/login-view.html',
+                      dom: 'login-view'
+                  }
+              };
+              this.defaultPage = 'login-view';
+
+          }
+
+          static get properties() {
+              return {
+              };
+          }
+
+          static get observers() {
+              return [
+                  '_routePageChanged(routeData.page)',
+              ];
+          }
+          changeRoute(e) {
+              console.log("change route");
+              var args = e.target.getAttribute('data-args');
+              this.$.appLoc.path = "/" + args;
+          }
+      }
+
+      window.customElements.define(SmDefaultApp.is, SmDefaultApp);
+  </script>
+</dom-module>

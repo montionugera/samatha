@@ -1,0 +1,45 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../shared-styles.html">
+
+
+<dom-module id="create-namespace-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      paper-button.action-button[active] {
+        --paper-button-ink-color: var(--paper-pink-a200);
+        /* These could also be individually defined for each of the
+          specific css classes, but we'll just do it once as an example */
+        --paper-button-flat-keyboard-focus: {
+          background-color: var(--paper-pink-a200);
+          color: white !important;
+        }
+      }
+    </style>
+
+    <div class="card">
+      <h1>Create Your Team Namespace</h1>
+      <form is="iron-form" id="form" method="post" action="/form/handler">
+        <paper-input name="ns" label="Name space key"></paper-input>
+        <paper-button raised="" class="primary"> Create </paper-button>
+      </form>
+    </div>
+  </template>
+
+  <script>
+      class CreateNamespaceView extends Polymer.Element {
+          static get is() {
+              return 'create-namespace-view';
+          }
+      }
+
+      window.customElements.define(CreateNamespaceView.is, CreateNamespaceView);
+  </script>
+</dom-module>

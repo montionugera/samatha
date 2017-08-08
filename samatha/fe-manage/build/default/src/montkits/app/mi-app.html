@@ -1,0 +1,101 @@
+<link rel="import" href="/bower_components/app-route/app-location.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="../miview/mi-view.html">
+<dom-module id="mi-app">
+  <template>
+    <div id="container">
+    </div>
+    <app-location id="appLocation" route="{{route}}"></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}">
+    </app-route>
+    <app-route route="{{subroute}}" pattern="/:id" data="{{subrouteData}}">
+    </app-route>
+    mi app
+    <!--<app-drawer-layout fullbleed>-->
+    <!--&lt;!&ndash; Drawer content &ndash;&gt;-->
+    <!--<app-drawer id="drawer" slot="drawer">-->
+    <!--<app-toolbar>Menu</app-toolbar>-->
+    <!--<app-side-menu page="[[page]]"></app-side-menu>-->
+    <!--</app-drawer>-->
+
+    <!--&lt;!&ndash; Main content &ndash;&gt;-->
+    <!--<app-header-layout has-scrolling-region>-->
+
+    <!--<app-header slot="header" condenses reveals shadow effects="waterfall">-->
+    <!--<app-toolbar >-->
+    <!--<paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>-->
+    <!--<div main-title>My App</div>-->
+    <!--</app-toolbar>-->
+    <!--</app-header>-->
+    <!--<app-main-container page="{{page}}"></app-main-container>-->
+    <!--</app-header-layout>-->
+    <!--</app-drawer-layout>-->
+  </template>
+
+  <script>
+      class MiApp extends MiView {
+          static get is() {
+              return 'mi-app';
+          }
+
+          constructor() {
+              super();
+              this.defaultPage = '';
+              this.currentCompId = null;
+              this.compUrlDict = {
+                          'my-view1': {
+                              src: '/src/pages/my-view1.html',
+                              dom: 'my-view1'
+                          }};
+              this.viewDelegate = {
+                          didFinishLoading: function (miView) {
+                              console.log("mi app ack didFinishLoading");
+                          }
+              }
+
+          }
+          static get observers() {
+              return [
+                  '_routePageChanged(routeData.page)',
+              ];
+          }
+          setContentView(compId) {
+              if(this.currentCompId === compId){
+                  return;
+              }
+              const didFinishLoading = (function (viewDom) {
+                  this.currentCompId = compId;
+                  const el = document.createElement(viewDom);
+                  this.$.container.innerHTML = "";
+                  el.dd = this.routeData.page;
+                  el.viewDelegate = this.viewDelegate;
+                  this.$.container.appendChild(el);
+              }).bind(this);
+              this.importComp(compId, didFinishLoading)
+          }
+          getComponentFromPage(page) {
+              const comp = page;
+              return comp;
+          }
+          _routePageChanged(page) {
+              if (page === undefined) {
+                  return;
+              }
+              const defaultPage = this.defaultPage;
+              page = page || defaultPage;
+              let componentId = this.getComponentFromPage(page);
+              if(!this.isAvailableCompId(componentId)){
+                  componentId = this.getComponentFromPage('404');
+              }
+              this.setContentView(componentId);
+              //comp == page
+//              // Close a non-persistent drawer when the page & route are changed.
+//              if (!this.$.drawer.persistent) {
+//                  this.$.drawer.close();
+//              }
+          }
+      }
+
+      window.customElements.define(MiApp.is, MiApp);
+  </script>
+</dom-module>
